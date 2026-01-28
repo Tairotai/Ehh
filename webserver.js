@@ -2,15 +2,16 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
+// Servir los archivos de la carpeta 'web'
 app.use(express.static(path.join(__dirname, 'web')));
 
 const port = process.env.PORT || 3000;
 
 try {
-    // Esto es lo más importante: le pasamos el puerto de Render a Ogar
-    const Ogar = require('./src/index.js');
-    // Forzamos a que Ogar use el puerto que Render nos da
-    if (Ogar && Ogar.config) Ogar.config.serverPort = port;
+    console.log("Iniciando motor Ogar...");
+    // Simplemente llamamos al index del motor. 
+    // Él mismo leerá el process.env.PORT que Render le da.
+    require('./src/index.js');
 } catch (e) {
     console.log("Error al cargar el motor: " + e.message);
 }
