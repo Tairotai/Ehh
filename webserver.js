@@ -2,22 +2,23 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
-// 1. Servir la web
 app.use(express.static(path.join(__dirname, 'web')));
 
-// 2. Variable para el puerto de Render
 const port = process.env.PORT || 3000;
 
-// 3. Arrancar Ogar con manejo de errores real
 try {
-    console.log("Intentando arrancar el cerebro Ogar...");
-    // Importamos Ogar
-    const Ogar = require('./src/index.js');
+    console.log("Buscando el motor Ogar...");
+    // Intentamos cargar el archivo principal de Ogar
+    // Si falla uno, intentará el otro
+    require('./src/index.js'); 
 } catch (e) {
-    console.log("LOG DE ERROR: " + e.message);
+    try {
+        require('./src/GameServer.js');
+    } catch (err) {
+        console.log("Error crítico: No se encontró el archivo de inicio en src. Error: " + err.message);
+    }
 }
 
-// 4. Escuchar en el puerto de Render
 app.listen(port, () => {
-    console.log(">>> SERVIDOR VIVO EN PUERTO: " + port);
+    console.log("Servidor Web corriendo en puerto: " + port);
 });
