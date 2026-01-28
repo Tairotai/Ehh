@@ -7,18 +7,14 @@ app.use(express.static(path.join(__dirname, 'web')));
 const port = process.env.PORT || 3000;
 
 try {
-    console.log("Buscando el motor Ogar...");
-    // Intentamos cargar el archivo principal de Ogar
-    // Si falla uno, intentará el otro
-    require('./src/index.js'); 
+    // Esto es lo más importante: le pasamos el puerto de Render a Ogar
+    const Ogar = require('./src/index.js');
+    // Forzamos a que Ogar use el puerto que Render nos da
+    if (Ogar && Ogar.config) Ogar.config.serverPort = port;
 } catch (e) {
-    try {
-        require('./src/GameServer.js');
-    } catch (err) {
-        console.log("Error crítico: No se encontró el archivo de inicio en src. Error: " + err.message);
-    }
+    console.log("Error al cargar el motor: " + e.message);
 }
 
 app.listen(port, () => {
-    console.log("Servidor Web corriendo en puerto: " + port);
+    console.log("Servidor Web y Ogar listos en puerto: " + port);
 });
