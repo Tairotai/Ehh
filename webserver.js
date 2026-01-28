@@ -7,12 +7,11 @@ app.use(express.static(path.join(__dirname, 'web')));
 const port = process.env.PORT || 3000;
 
 try {
-    // Esto arranca el motor de Ogar (necesitas la carpeta src)
     const Ogar = require('./src/index.js'); 
 } catch (e) {
-    console.log("Error: Falta la carpeta 'src' de Ogar en el repositorio.");
+    console.log("Falta carpeta src");
 }
 
 app.listen(port, () => {
-    console.log("Servidor y Web listos en el puerto " + port);
+    console.log("Puerto: " + port);
 });
