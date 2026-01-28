@@ -23,7 +23,7 @@ startServer();
 function startServer() {
     gameServer = new GameServer();
     
-    // ESTA LÍNEA ES LA QUE ARREGLA TODO EN RENDER
+    // IMPORTANTE: Render nos da el puerto aquí
     gameServer.config.serverPort = process.env.PORT || 3000; 
     
     gameServer.start();
