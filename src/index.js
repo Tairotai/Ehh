@@ -1,13 +1,11 @@
-// Imports
 var Commands = require('./modules/CommandList');
 var GameServer = require('./GameServer');
 var AsyncConsole = require('asyncconsole');
-// Init variables
+
 var showConsole = true;
-// Start message
+
 console.log("[Game] Ogar - An open source Agar.io server implementation");
 
-// Handle arguments
 process.argv.forEach(function(val) {
     if (val == "--noconsole") {
         showConsole = false;
@@ -24,9 +22,12 @@ startServer();
 
 function startServer() {
     gameServer = new GameServer();
+    
+    // ESTA LÍNEA ES LA QUE ARREGLA TODO EN RENDER
+    gameServer.config.serverPort = process.env.PORT || 3000; 
+    
     gameServer.start();
 
-    // Add handles
     gameServer.shutdownHandle = function() {
         process.exit(0);
     };
@@ -34,41 +35,28 @@ function startServer() {
         gameServer.restartScheduled = new Date();
         gameServer.restartAt = new Date(Date.now() + timeout);
         gameServer.restartId = setTimeout(function() {
-                                   gameServer.socketServer.close();
-                                   gameServer.httpServer.close();
-                                   gameServer = null;
-                                   if (global.gc) global.gc(); // Force garbage collection
-                                   process.stdout.write("\u001b[2J\u001b[0;0H"); // Clear the console
-                                   startServer();
-                               }, timeout);
+            gameServer.socketServer.close();
+            gameServer.httpServer.close();
+            gameServer.gameServer = null;
+            if (global.gc) global.gc(); 
+            process.stdout.write("\u001b[2J\u001b[0;0H"); 
+            startServer();
+        }, timeout);
     };
 }
 
-// Initialize the server console
 if (showConsole) {
     setTimeout(function() {
-    var input = new AsyncConsole('> ',function(command) {
-        parseCommands(command);
-    })
-    },200)
+        var input = new AsyncConsole('> ', function(command) {
+            parseCommands(command);
+        });
+    }, 200);
 }
 
-// Console functions
-
-
 function parseCommands(str) {
-    // Log the string
     gameServer.log.onCommand(str);
-
-    // Don't process ENTER
-    if (str === '')
-        return;
-
-    // Splits the string
+    if (str === '') return;
     var split = str.split(" ");
-
-    // Process the first string value
     var first = split[0].toLowerCase();
-
     gameServer.pluginHandler.executeCommand(first, split);
 }
